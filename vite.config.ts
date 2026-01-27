@@ -10,11 +10,11 @@ export default defineConfig({
     viteStaticCopy({
       targets: [
         {
-          src: 'node_modules/web-ifc/web-ifc.wasm',
+          src: 'node_modules/web-ifc-three/node_modules/web-ifc/web-ifc.wasm',
           dest: 'assets'
         },
         {
-          src: 'node_modules/web-ifc/web-ifc-mt.wasm',
+          src: 'node_modules/web-ifc-three/node_modules/web-ifc/web-ifc-mt.wasm',
           dest: 'assets'
         },
         {
