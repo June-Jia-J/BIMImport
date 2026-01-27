@@ -63,7 +63,7 @@ export const InspectorPanel = () => {
             </div>
 
             <ScrollArea className="flex-1 w-full h-full">
-                <div className="space-y-8 pb-8" style={{ padding: '32px' }}>
+                <div className="space-y-8 pb-8 p-4">
                     {/* General Info */}
                     <div className="space-y-3">
                         <div className="flex items-center gap-2 mb-4">
@@ -73,7 +73,7 @@ export const InspectorPanel = () => {
                             <h3 className="text-sm font-semibold text-foreground">基本信息</h3>
                         </div>
 
-                        <div className="bg-card rounded-xl border border-border/50 shadow-sm hover:shadow-lg transition-all duration-300 p-4 space-y-3">
+                        <div className="bg-card rounded-xl border border-border/50 shadow-sm hover:shadow-lg transition-all duration-300 p-4 space-y-2">
                             <div className="flex justify-between items-start gap-4">
                                 <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">名称</span>
                                 <span className="text-sm font-medium text-foreground text-right flex-1 truncate">
@@ -92,11 +92,11 @@ export const InspectorPanel = () => {
 
                             <Separator className="bg-border/50" />
 
-                            <div className="flex justify-between items-start gap-4">
+                            <div className="space-y-1.5">
                                 <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">UUID</span>
-                                <span className="text-xs font-mono text-muted-foreground text-right flex-1 truncate">
+                                <div className="font-mono text-xs bg-muted/50 px-2.5 py-1.5 rounded-md text-foreground break-all select-all hover:bg-muted transition-colors cursor-text group relative">
                                     {selectedObject.uuid}
-                                </span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -112,8 +112,8 @@ export const InspectorPanel = () => {
                             <h3 className="text-sm font-semibold text-foreground">变换</h3>
                         </div>
 
-                        <div className="bg-card rounded-xl border border-border/50 shadow-sm hover:shadow-lg transition-all duration-300 p-4 space-y-3">
-                            <div className="space-y-2">
+                        <div className="bg-card rounded-xl border border-border/50 shadow-sm hover:shadow-lg transition-all duration-300 p-4 space-y-2">
+                            <div className="space-y-1.5">
                                 <div className="flex items-center gap-2">
                                     <Move className="h-3 w-3 text-muted-foreground" />
                                     <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">位置</span>
@@ -125,7 +125,7 @@ export const InspectorPanel = () => {
 
                             <Separator className="bg-border/50" />
 
-                            <div className="space-y-2">
+                            <div className="space-y-1.5">
                                 <div className="flex items-center gap-2">
                                     <RotateCw className="h-3 w-3 text-muted-foreground" />
                                     <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">旋转</span>
@@ -137,7 +137,7 @@ export const InspectorPanel = () => {
 
                             <Separator className="bg-border/50" />
 
-                            <div className="space-y-2">
+                            <div className="space-y-1.5">
                                 <div className="flex items-center gap-2">
                                     <Maximize2 className="h-3 w-3 text-muted-foreground" />
                                     <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">缩放</span>
