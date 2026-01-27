@@ -18,8 +18,8 @@ export const MainLayout = () => {
                 </div>
 
                 <div className="flex-1 flex overflow-hidden relative gap-3 p-3">
-                    {/* Left Sidebar - Model Tree */}
-                    <div className="w-[320px] flex-none z-10 hidden md:block">
+                    {/* Left Sidebar - Model Tree - 始终显示 */}
+                    <div className="w-[280px] lg:w-[320px] flex-none z-10">
                         <div className="h-full bg-background/95 backdrop-blur-md rounded-2xl overflow-hidden shadow-xl border border-border">
                             <ModelTree />
                         </div>
@@ -45,7 +45,7 @@ export const MainLayout = () => {
                         )}
 
                         {/* Title Overlay with Gradient */}
-                        <div className="absolute top-6 left-6 z-0 pointer-events-none">
+                        <div className="absolute top-6 left-6 z-10 pointer-events-none">
                             <div className="bg-background/80 backdrop-blur-md rounded-xl px-6 py-3 shadow-lg border border-border/50">
                                 <h1 className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/60 text-2xl font-bold tracking-tight">
                                     BIM WebGPU 查看器
@@ -54,8 +54,8 @@ export const MainLayout = () => {
                         </div>
                     </div>
 
-                    {/* Right Sidebar - Inspector */}
-                    <div className="w-[320px] flex-none z-10 hidden lg:block">
+                    {/* Right Sidebar - Inspector - 始终显示 */}
+                    <div className="w-[280px] lg:w-[320px] flex-none z-10">
                         <div className="h-full bg-background/95 backdrop-blur-md rounded-2xl overflow-hidden shadow-xl border border-border">
                             <InspectorPanel />
                         </div>
