@@ -73,11 +73,21 @@ export const Viewer3D = () => {
         if (!sceneManagerRef.current || !cameraRef.current || !controlsRef.current) return;
         const scene = sceneManagerRef.current.scene;
 
-        // 1. Remove existing models that are seemingly not in the store? 
-        // For simplicity, let's assume we can just add new ones for now, OR better, clear scene group designated for models.
-        // Ideally SceneManager has a method to manage models.
+        // Get all current model objects in the scene (excluding helpers/lights)
+        const currentSceneModels = scene.children.filter(
+            child => child.type === 'Group' && child.name // Models have names set from file.name
+        );
 
-        // Quick & Dirty: Add latest models if not already in scene
+        // Remove models that are no longer in the store
+        currentSceneModels.forEach(sceneModel => {
+            const stillExists = models.some(storeModel => storeModel === sceneModel);
+            if (!stillExists) {
+                scene.remove(sceneModel);
+                console.log("Viewer3D: Removed model from scene", sceneModel.name);
+            }
+        });
+
+        // Add new models that aren't in the scene yet
         models.forEach(model => {
             if (model.parent !== scene) {
                 scene.add(model);
@@ -103,6 +113,14 @@ export const Viewer3D = () => {
                 }
             }
         });
+
+        // If no models remain, reset camera to default position
+        if (models.length === 0) {
+            cameraRef.current!.position.set(20, 20, 20);
+            cameraRef.current!.lookAt(0, 0, 0);
+            controlsRef.current!.controls.target.set(0, 0, 0);
+            console.log("Viewer3D: Reset camera to default position");
+        }
 
     }, [models]);
 
