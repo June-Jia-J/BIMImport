@@ -92,27 +92,27 @@ export const ModelTree = () => {
                 </div>
             </div>
 
-            <ScrollArea className="flex-1 w-full h-full">
-                <div className="w-full">
-                    {models.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center py-16 px-4" style={{ padding: '16px 24px' }}>
-                            <div className="w-16 h-16 rounded-2xl bg-muted/50 flex items-center justify-center mb-4">
-                                <Layers className="h-8 w-8 text-muted-foreground/50" />
-                            </div>
-                            <p className="text-center text-muted-foreground text-sm font-medium">
-                                暂无模型
-                            </p>
-                            <p className="text-center text-muted-foreground/60 text-xs mt-1">
-                                点击"加载模型"开始
-                            </p>
-                        </div>
-                    ) : (
-                        models.map((model, index) => (
-                            <TreeNode key={model.uuid || index} object={model} />
-                        ))
-                    )}
+            {models.length === 0 ? (
+                <div className="flex-1 flex flex-col items-center justify-center p-6">
+                    <div className="w-20 h-20 rounded-2xl bg-muted/50 flex items-center justify-center mb-4">
+                        <Layers className="h-10 w-10 text-muted-foreground/50" />
+                    </div>
+                    <p className="text-sm text-muted-foreground font-medium text-center">
+                        暂无模型
+                    </p>
+                    <p className="text-xs text-muted-foreground/60 text-center mt-1">
+                        点击"加载模型"开始
+                    </p>
                 </div>
-            </ScrollArea>
+            ) : (
+                <ScrollArea className="flex-1 w-full h-full">
+                    <div className="w-full">
+                        {models.map((model, index) => (
+                            <TreeNode key={model.uuid || index} object={model} />
+                        ))}
+                    </div>
+                </ScrollArea>
+            )}
         </div>
     );
 };
