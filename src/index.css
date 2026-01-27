@@ -124,9 +124,23 @@
     @apply border-border outline-ring/50;
   }
 
+  html {
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  #root {
+    height: 100vh;
+    overflow: hidden;
+  }
+
   body {
     @apply bg-background text-foreground antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
+    overflow: hidden;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
   }
 
   /* 优化滚动条样式 */
