@@ -46,7 +46,7 @@ export const Toolbar = () => {
 
     return (
         <div className="bg-background/95 backdrop-blur-md border-b border-border/50">
-            <div className="px-6 py-4 flex gap-3 items-center">
+            <div className="flex gap-4 items-center max-w-[2000px] mx-auto" style={{ padding: '20px 32px' }}>
                 <input
                     type="file"
                     ref={fileInputRef}

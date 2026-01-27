@@ -27,7 +27,7 @@ export const InspectorPanel = () => {
     if (!selectedObject) {
         return (
             <div className="h-full flex flex-col">
-                <div className="px-6 py-5 border-b border-border/50">
+                <div className="px-10 py-6 border-b border-border/50" style={{ padding: '0 24px' }}>
                     <div className="flex items-center gap-3">
                         <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
                             <Settings className="h-4 w-4 text-primary" />
@@ -52,8 +52,8 @@ export const InspectorPanel = () => {
     }
 
     return (
-        <div className="h-full flex flex-col">
-            <div className="px-6 py-5 border-b border-border/50">
+        <div className="h-full flex flex-col min-h-0 bg-background/95 backdrop-blur-md rounded-2xl overflow-hidden shadow-xl border border-border">
+            <div className="border-b border-border/50 bg-background/50 backdrop-blur-sm" style={{ padding: '20px 24px' }}>
                 <div className="flex items-center gap-3">
                     <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
                         <Settings className="h-4 w-4 text-primary" />
@@ -62,8 +62,8 @@ export const InspectorPanel = () => {
                 </div>
             </div>
 
-            <ScrollArea className="flex-1">
-                <div className="p-6 space-y-6">
+            <ScrollArea className="flex-1 w-full h-full">
+                <div className="space-y-8 pb-8" style={{ padding: '32px' }}>
                     {/* General Info */}
                     <div className="space-y-3">
                         <div className="flex items-center gap-2 mb-4">
@@ -162,14 +162,14 @@ export const InspectorPanel = () => {
                                     <h3 className="text-sm font-semibold text-foreground">数据</h3>
                                 </div>
 
-                                <div className="bg-card rounded-xl border border-border/50 shadow-sm hover:shadow-lg transition-all duration-300 p-4 space-y-3">
+                                <div className="bg-card rounded-xl border border-border/50 shadow-sm hover:shadow-lg transition-all duration-300 p-6 space-y-6">
                                     {Object.entries(selectedObject.userData).map(([key, value], index, arr) => (
                                         <React.Fragment key={key}>
                                             <div className="flex justify-between items-start gap-4">
-                                                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide truncate">
+                                                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide break-all max-w-[40%] text-left mt-0.5">
                                                     {key}
                                                 </span>
-                                                <span className="text-sm text-foreground text-right flex-1 truncate">
+                                                <span className="text-sm text-foreground text-right flex-1 break-words whitespace-pre-wrap">
                                                     {String(value)}
                                                 </span>
                                             </div>

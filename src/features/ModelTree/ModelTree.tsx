@@ -30,15 +30,15 @@ const TreeNode: React.FC<TreeNodeProps> = ({ object, level = 0 }) => {
         <div className="select-none">
             <div
                 className={cn(
-                    "group flex items-center py-2.5 px-3 hover:bg-accent/60 cursor-pointer text-sm transition-all duration-200 rounded-lg my-0.5",
+                    "group flex items-start py-2.5 pr-3 hover:bg-accent/60 cursor-pointer text-sm transition-all duration-200 rounded-lg my-0.5 min-w-0 h-auto",
                     isSelected && "bg-primary/10 text-primary font-medium shadow-sm border border-primary/20"
                 )}
-                style={{ paddingLeft: `${level * 16 + 12}px` }}
+                style={{ paddingLeft: `${level * 16 + 0}px` }}
                 onClick={handleSelect}
             >
                 <div
                     className={cn(
-                        "mr-2 p-1 rounded-md hover:bg-muted/80 transition-colors",
+                        "mr-2 p-1 rounded-md hover:bg-muted/80 transition-colors mt-0.5",
                         !hasChildren && "invisible"
                     )}
                     onClick={handleToggle}
@@ -50,18 +50,21 @@ const TreeNode: React.FC<TreeNodeProps> = ({ object, level = 0 }) => {
                 </div>
 
                 <Box className={cn(
-                    "h-3.5 w-3.5 mr-2.5 transition-colors",
+                    "h-3.5 w-3.5 mr-2.5 flex-shrink-0 transition-colors mt-1.5",
                     isSelected ? "text-primary" : "text-muted-foreground group-hover:text-foreground"
                 )} />
 
-                <span className="truncate flex-1">{object.name || `对象 ${object.id}`}</span>
-
-                <span className={cn(
-                    "ml-auto text-xs px-2 py-0.5 rounded-md transition-colors",
-                    isSelected ? "bg-primary/20 text-primary" : "bg-muted/50 text-muted-foreground"
-                )}>
-                    {object.type}
-                </span>
+                <div className="flex-1 min-w-0 flex flex-col gap-0.5 py-1">
+                    <span className="break-words whitespace-pre-wrap leading-tight text-sm font-medium" title={object.name || `对象 ${object.id}`}>
+                        {object.name || `对象 ${object.id}`}
+                    </span>
+                    <span className={cn(
+                        "text-[10px] w-fit px-1.5 py-0.5 rounded transition-colors",
+                        isSelected ? "bg-primary/20 text-primary" : "bg-muted/50 text-muted-foreground"
+                    )}>
+                        {object.type}
+                    </span>
+                </div>
             </div>
 
             {isOpen && hasChildren && (
@@ -79,8 +82,8 @@ export const ModelTree = () => {
     const { models } = useModelStore();
 
     return (
-        <div className="h-full flex flex-col">
-            <div className="px-6 py-5 border-b border-border/50">
+        <div className="h-full flex flex-col min-h-0 bg-background/95 backdrop-blur-md rounded-2xl overflow-hidden shadow-xl border border-border">
+            <div className="border-b border-border/50 bg-background/50 backdrop-blur-sm" style={{ padding: '0 24px' }}>
                 <div className="flex items-center gap-3">
                     <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
                         <Layers className="h-4 w-4 text-primary" />
@@ -89,10 +92,10 @@ export const ModelTree = () => {
                 </div>
             </div>
 
-            <ScrollArea className="flex-1">
-                <div className="p-3">
+            <ScrollArea className="flex-1 w-full h-full">
+                <div className="w-full">
                     {models.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center py-16 px-4">
+                        <div className="flex flex-col items-center justify-center py-16 px-4" style={{ padding: '16px 24px' }}>
                             <div className="w-16 h-16 rounded-2xl bg-muted/50 flex items-center justify-center mb-4">
                                 <Layers className="h-8 w-8 text-muted-foreground/50" />
                             </div>

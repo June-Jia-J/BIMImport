@@ -17,12 +17,10 @@ export const MainLayout = () => {
                     <Toolbar />
                 </div>
 
-                <div className="flex-1 flex overflow-hidden relative gap-3 p-3">
+                <div className="flex-1 flex overflow-hidden relative gap-6 p-6">
                     {/* Left Sidebar - Model Tree - 始终显示 */}
-                    <div className="w-[280px] lg:w-[320px] flex-none z-10">
-                        <div className="h-full bg-background/95 backdrop-blur-md rounded-2xl overflow-hidden shadow-xl border border-border">
-                            <ModelTree />
-                        </div>
+                    <div className="w-[280px] lg:w-[320px] flex-none z-10 flex flex-col h-full min-h-0">
+                        <ModelTree />
                     </div>
 
                     {/* Center - 3D Viewer */}
@@ -45,20 +43,18 @@ export const MainLayout = () => {
                         )}
 
                         {/* Title Overlay with Gradient */}
-                        <div className="absolute top-6 left-6 z-10 pointer-events-none">
-                            <div className="bg-background/80 backdrop-blur-md rounded-xl px-6 py-3 shadow-lg border border-border/50">
+                        <div className="absolute top-8 left-8 z-10 pointer-events-none">
+                            <div className="bg-background/80 backdrop-blur-md rounded-xl px-8 py-4 shadow-lg border border-border/50">
                                 <h1 className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/60 text-2xl font-bold tracking-tight">
-                                    BIM WebGPU 查看器
+                                    BIM WebGPU 查看器 v2.0
                                 </h1>
                             </div>
                         </div>
                     </div>
 
                     {/* Right Sidebar - Inspector - 始终显示 */}
-                    <div className="w-[280px] lg:w-[320px] flex-none z-10">
-                        <div className="h-full bg-background/95 backdrop-blur-md rounded-2xl overflow-hidden shadow-xl border border-border">
-                            <InspectorPanel />
-                        </div>
+                    <div className="w-[280px] lg:w-[320px] flex-none z-10 flex flex-col h-full min-h-0">
+                        <InspectorPanel />
                     </div>
                 </div>
             </div>
