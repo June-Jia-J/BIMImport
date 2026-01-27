@@ -1,9 +1,9 @@
 import React, { useRef } from 'react';
 import { Button } from "@/components/ui/button";
-import { Trash2, FolderOpen } from "lucide-react";
+import { FolderOpen, RotateCcw, Sparkles } from "lucide-react";
 import { useModelStore } from '../../core/store/useModelStore';
 import { LoaderFactory } from '../../core/loaders/LoaderFactory';
-import { toast } from "sonner"; // Shadcn hook replaced
+import { toast } from "sonner";
 
 export const Toolbar = () => {
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -12,8 +12,6 @@ export const Toolbar = () => {
     const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (!file) return;
-
-        // const extension = file.name.split('.').pop()?.toLowerCase();
 
         try {
             setLoading(true, 0);
@@ -24,7 +22,6 @@ export const Toolbar = () => {
             });
 
             const model = await loader.load(file, (progress) => {
-                // Optional: Update granular progress if available
                 console.log('Loading progress:', progress);
             });
 
@@ -43,42 +40,59 @@ export const Toolbar = () => {
             });
         } finally {
             setLoading(false);
-            // Reset input
             if (fileInputRef.current) fileInputRef.current.value = '';
         }
     };
 
     return (
-        <div className="p-2 flex gap-2 items-center bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t md:border-t-0 md:border-b">
-            <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleFileChange}
-                accept=".ifc,.stp,.step"
-                className="hidden"
-            />
+        <div className="bg-background/95 backdrop-blur-md border-b border-border/50">
+            <div className="px-6 py-4 flex gap-3 items-center">
+                <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    accept=".ifc,.stp,.step"
+                    className="hidden"
+                />
 
-            <Button
-                variant="default"
-                size="sm"
-                onClick={() => fileInputRef.current?.click()}
-                className="gap-2"
-            >
-                <FolderOpen className="h-4 w-4" />
-                加载模型
-            </Button>
+                {/* Logo/Brand */}
+                <div className="flex items-center gap-2 mr-auto">
+                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg">
+                        <Sparkles className="h-4 w-4 text-primary-foreground" />
+                    </div>
+                    <span className="font-semibold text-lg bg-gradient-to-r from-foreground to-foreground/60 bg-clip-text text-transparent hidden sm:inline">
+                        BIM 查看器
+                    </span>
+                </div>
 
-            <div className="h-6 w-px bg-border mx-2" />
+                {/* Action Buttons */}
+                <div className="flex gap-2">
+                    <Button
+                        variant="default"
+                        size="default"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-300 gap-2 px-6"
+                        style={{
+                            background: 'linear-gradient(135deg, oklch(0.55 0.22 264) 0%, oklch(0.50 0.20 280) 100%)'
+                        }}
+                    >
+                        <FolderOpen className="h-4 w-4" />
+                        <span className="font-medium">加载模型</span>
+                    </Button>
 
-            <Button
-                variant="ghost"
-                size="sm"
-                onClick={reset}
-                className="gap-2 text-destructive hover:text-destructive hover:bg-destructive/10"
-            >
-                <Trash2 className="h-4 w-4" />
-                重置场景
-            </Button>
+                    <div className="w-px h-8 bg-border/50" />
+
+                    <Button
+                        variant="ghost"
+                        size="default"
+                        onClick={reset}
+                        className="gap-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all duration-300 px-4"
+                    >
+                        <RotateCcw className="h-4 w-4" />
+                        <span className="font-medium hidden sm:inline">重置场景</span>
+                    </Button>
+                </div>
+            </div>
         </div>
     );
 };
