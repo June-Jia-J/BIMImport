@@ -3,10 +3,16 @@ import * as THREE from 'three';
 import { WebGPUContext } from '../../core/engine/WebGPUContext';
 import { SceneManager } from '../../core/engine/SceneManager';
 import { CameraControls } from '../../core/engine/CameraControls';
+import { useModelStore } from '../../core/store/useModelStore';
 
 export const Viewer3D = () => {
     const containerRef = useRef<HTMLDivElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const sceneManagerRef = useRef<SceneManager | null>(null);
+    const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
+    const controlsRef = useRef<CameraControls | null>(null);
+
+    const models = useModelStore((state) => state.models);
 
     useEffect(() => {
         if (!canvasRef.current || !containerRef.current) return;
@@ -16,37 +22,89 @@ export const Viewer3D = () => {
 
         // Initialize Scene
         const sceneManager = new SceneManager();
+        sceneManagerRef.current = sceneManager;
 
         // Initialize Camera
         const camera = new THREE.PerspectiveCamera(
             75,
             window.innerWidth / window.innerHeight,
             0.1,
-            1000
+            10000 // Increased far plane for large models
         );
         camera.position.set(20, 20, 20);
+        cameraRef.current = camera;
 
         // Initialize Controls
         const controls = new CameraControls(camera, canvasRef.current);
+        controlsRef.current = controls;
 
         // Animation Loop
         const animate = () => {
             controls.update();
-            // Rotate basic animation for visual feedback if nothing loaded
-            // sceneManager.scene.rotation.y += 0.001; 
-
             context.render(sceneManager.scene, camera);
         };
 
         // Use setAnimationLoop for WebXR/WebGPU compatibility
         context.renderer.setAnimationLoop(animate);
 
+        // Handle Resize
+        const handleResize = () => {
+            if (!containerRef.current || !camera) return;
+            const width = containerRef.current.clientWidth;
+            const height = containerRef.current.clientHeight;
+
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+            context.renderer.setSize(width, height);
+        }
+        window.addEventListener('resize', handleResize);
+
+
         // Cleanup
         return () => {
+            window.removeEventListener('resize', handleResize);
             context.renderer.setAnimationLoop(null);
             // Optional: Dispose resources
         };
     }, []);
+
+    // Sync models with scene
+    useEffect(() => {
+        if (!sceneManagerRef.current || !cameraRef.current || !controlsRef.current) return;
+        const scene = sceneManagerRef.current.scene;
+
+        // 1. Remove existing models that are seemingly not in the store? 
+        // For simplicity, let's assume we can just add new ones for now, OR better, clear scene group designated for models.
+        // Ideally SceneManager has a method to manage models.
+
+        // Quick & Dirty: Add latest models if not already in scene
+        models.forEach(model => {
+            if (model.parent !== scene) {
+                scene.add(model);
+                console.log("Viewer3D: Added model to scene", model);
+
+                // Auto-focus logic
+                const box = new THREE.Box3().setFromObject(model);
+                if (!box.isEmpty()) {
+                    const center = box.getCenter(new THREE.Vector3());
+                    const size = box.getSize(new THREE.Vector3());
+                    const maxDim = Math.max(size.x, size.y, size.z);
+                    const fov = cameraRef.current!.fov * (Math.PI / 180);
+                    let cameraZ = Math.abs(maxDim / 2 * Math.tan(fov * 2)); // rough estimate
+                    cameraZ *= 2.5; // Zoom out a bit
+
+                    const direction = new THREE.Vector3(1, 1, 1).normalize();
+                    const position = center.clone().add(direction.multiplyScalar(cameraZ));
+
+                    cameraRef.current!.position.copy(position);
+                    cameraRef.current!.lookAt(center);
+                    controlsRef.current!.controls.target.copy(center); // Update controls target to center of model
+                    console.log("Viewer3D: Auto-focused camera", { position, center });
+                }
+            }
+        });
+
+    }, [models]);
 
     return (
         <div ref={containerRef} className="w-full h-screen overflow-hidden bg-black">

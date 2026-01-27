@@ -9,7 +9,8 @@ export class StepLoaderStrategy implements IBimLoader {
     }
 
     async load(file: File, _onProgress?: (event: ProgressEvent) => void): Promise<THREE.Group> {
-        const text = await file.text();
+        const buffer = await file.arrayBuffer();
+        const fileBuffer = new Uint8Array(buffer);
 
         // Initialize OCCT (this loads the WASM and Worker)
         const occt = await initOCCT({
@@ -17,7 +18,15 @@ export class StepLoaderStrategy implements IBimLoader {
         });
 
         // Parse the STEP file
-        const result = await occt.readStepFile(text);
+        const result = occt.ReadStepFile(fileBuffer, null);
+        console.log("StepLoaderStrategy: Import result", result);
+
+        if (!result.success) {
+            console.error("StepLoaderStrategy: Import failed", result);
+            throw new Error("Failed to parse STEP file (occt-import-js returned success=false)");
+        }
+
+        console.log(`StepLoaderStrategy: Found ${result.meshes.length} meshes`);
 
         // Convert logic (simplified, assuming result needs processing)
         // occt-import-js typically returns a mesh-like structure or raw data that needs to be converted to THREE.BufferGeometry
@@ -49,6 +58,19 @@ export class StepLoaderStrategy implements IBimLoader {
             const m = new THREE.Mesh(geometry, material);
             group.add(m);
         }
+
+        if (group.children.length === 0) {
+            console.warn("StepLoaderStrategy: Group is empty after processing meshes!");
+        }
+
+        // Log Bounding Box
+        const box = new THREE.Box3().setFromObject(group);
+        console.log("StepLoaderStrategy: Model Bounding Box", {
+            min: box.min,
+            max: box.max,
+            size: box.getSize(new THREE.Vector3()),
+            center: box.getCenter(new THREE.Vector3())
+        });
 
         return group;
     }
