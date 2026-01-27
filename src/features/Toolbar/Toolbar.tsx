@@ -19,8 +19,8 @@ export const Toolbar = () => {
             setLoading(true, 0);
             const loader = LoaderFactory.getLoader(file.name);
 
-            toast.info("Loading Model", {
-                description: `Parsing ${file.name}...`,
+            toast.info("加载模型", {
+                description: `正在解析 ${file.name}...`,
             });
 
             const model = await loader.load(file, (progress) => {
@@ -31,15 +31,15 @@ export const Toolbar = () => {
             if (model) {
                 model.name = file.name;
                 addModel(model);
-                toast.success("Success", {
-                    description: `Successfully loaded ${file.name}`,
+                toast.success("成功", {
+                    description: `成功加载 ${file.name}`,
                 });
             }
 
         } catch (error: any) {
             console.error(error);
-            toast.error("Error Loading Model", {
-                description: error.message || "Unknown error occurred",
+            toast.error("加载模型失败", {
+                description: error.message || "发生未知错误",
             });
         } finally {
             setLoading(false);
@@ -65,7 +65,7 @@ export const Toolbar = () => {
                 className="gap-2"
             >
                 <FolderOpen className="h-4 w-4" />
-                Load Model
+                加载模型
             </Button>
 
             <div className="h-6 w-px bg-border mx-2" />
@@ -77,7 +77,7 @@ export const Toolbar = () => {
                 className="gap-2 text-destructive hover:text-destructive hover:bg-destructive/10"
             >
                 <Trash2 className="h-4 w-4" />
-                Reset Scene
+                重置场景
             </Button>
         </div>
     );

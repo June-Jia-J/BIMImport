@@ -44,7 +44,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({ object, level = 0 }) => {
                 </div>
 
                 <Box className="h-3 w-3 mr-2 text-muted-foreground" />
-                <span className="truncate">{object.name || `Object ${object.id}`}</span>
+                <span className="truncate">{object.name || `对象 ${object.id}`}</span>
                 <span className="ml-auto text-xs text-muted-foreground opacity-50">{object.type}</span>
             </div>
 
@@ -65,13 +65,13 @@ export const ModelTree = () => {
     return (
         <div className="h-full flex flex-col bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-r">
             <div className="p-4 border-b">
-                <h2 className="font-semibold tracking-tight">Model Hierarchy</h2>
+                <h2 className="font-semibold tracking-tight">模型层级</h2>
             </div>
             <ScrollArea className="flex-1">
                 <div className="p-2">
                     {models.length === 0 ? (
                         <div className="text-center text-muted-foreground py-8 text-sm">
-                            No models loaded
+                            暂无模型
                         </div>
                     ) : (
                         models.map((model, index) => (
