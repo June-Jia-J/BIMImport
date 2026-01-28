@@ -74,11 +74,11 @@ export const InspectorPanel = () => {
                         </div>
 
                         <div className="bg-card rounded-xl border border-border/50 shadow-sm hover:shadow-lg transition-all duration-300 p-4 space-y-2">
-                            <div className="flex justify-between items-start gap-4">
+                            <div className="space-y-1.5">
                                 <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">名称</span>
-                                <span className="text-sm font-medium text-foreground text-right flex-1 truncate">
+                                <div className="text-sm font-medium text-foreground bg-muted/50 p-3 rounded-md break-all">
                                     {selectedObject.name || `对象 ${selectedObject.id}`}
-                                </span>
+                                </div>
                             </div>
 
                             <Separator className="bg-border/50" />
