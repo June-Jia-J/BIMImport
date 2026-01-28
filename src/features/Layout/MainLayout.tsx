@@ -30,10 +30,11 @@ export const MainLayout = () => {
 
                     {/* Left Sidebar - Model Tree */}
                     <div className={cn(
-                        "fixed inset-y-0 left-0 z-50 w-[85%] sm:w-[320px] bg-background/95 backdrop-blur-xl shadow-2xl transition-transform duration-300 ease-in-out border-r border-border/50",
-                        "lg:relative lg:translate-x-0 lg:w-[320px] lg:bg-transparent lg:shadow-none lg:border-none lg:flex-none lg:flex lg:flex-col lg:h-full lg:min-h-0 lg:z-10",
-                        "-translate-x-full lg:translate-x-0", // Default state (Mobile hidden, Desktop visible)
-                        isModelTreeOpen && "translate-x-0" // Open state override
+                        "fixed inset-y-0 z-50 w-[85%] sm:w-[320px] bg-background/95 backdrop-blur-xl shadow-2xl transition-all duration-300 ease-in-out border-r border-border/50",
+                        // Mobile Positioning Logic: Use Left property
+                        isModelTreeOpen ? "left-0" : "-left-full",
+                        // Desktop Overrides: Static positioning resets fixed/left/right behavior
+                        "lg:static lg:w-[320px] lg:bg-transparent lg:shadow-none lg:border-none lg:flex-none lg:flex lg:flex-col lg:h-full lg:min-h-0 lg:z-10"
                     )}>
                         <div className="h-full pt-20 lg:pt-0 p-4 lg:p-0">
                             <ModelTree />
@@ -71,10 +72,11 @@ export const MainLayout = () => {
 
                     {/* Right Sidebar - Inspector */}
                     <div className={cn(
-                        "fixed inset-y-0 right-0 z-50 w-[85%] sm:w-[320px] bg-background/95 backdrop-blur-xl shadow-2xl transition-transform duration-300 ease-in-out border-l border-border/50",
-                        "lg:relative lg:translate-x-0 lg:w-[320px] lg:bg-transparent lg:shadow-none lg:border-none lg:flex-none lg:flex lg:flex-col lg:h-full lg:min-h-0 lg:z-10",
-                        "translate-x-full lg:translate-x-0", // Default state (Mobile hidden, Desktop visible)
-                        isInspectorOpen && "translate-x-0" // Open state override
+                        "fixed inset-y-0 z-50 w-[85%] sm:w-[320px] bg-background/95 backdrop-blur-xl shadow-2xl transition-all duration-300 ease-in-out border-l border-border/50",
+                        // Mobile Positioning Logic: Use Right property
+                        isInspectorOpen ? "right-0" : "-right-full",
+                        // Desktop Overrides: Static positioning resets fixed/left/right behavior
+                        "lg:static lg:w-[320px] lg:bg-transparent lg:shadow-none lg:border-none lg:flex-none lg:flex lg:flex-col lg:h-full lg:min-h-0 lg:z-10"
                     )}>
                         <div className="h-full pt-20 lg:pt-0 p-4 lg:p-0">
                             <InspectorPanel />
