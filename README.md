@@ -24,6 +24,23 @@
 - **属性查看**: 提供检查面板以查看对象元数据。
 - **暗黑模式**: 专业的深色 UI 设计。
 
+## ⚡ 轻量化实现 (Lightweight Architecture)
+本项目采用多维度技术手段实现“BIM模型导入与轻量化”的核心需求：
+
+### 1. 渲染层 (Rendering Layer) - WebGPU
+- **技术选型**: 采用下一代图形标准 **WebGPU** (via `three/webgpu`) 替代传统的 WebGL。
+- **轻量化收益**: 显著降低由于大量 Draw Calls 引起的 CPU 开销，能够更高效地处理 BIM 模型中成千上万的复杂构件，从而在浏览器中保持高帧率流畅运行。
+
+### 2. 计算层 (Computation Layer) - WASM + Workers
+- **技术选型**: 集成 `web-ifc` (WASM) 和 `occt-import-js` (WASM) 解析核心，并配置在 **Web Workers** 中运行。
+- **轻量化收益**: 
+    - **二进制执行**: WASM 提供接近原生的解析速度，快速处理 `.ifc` 和 `.stp` 文件。
+    - **非阻塞主线程**: 繁重的几何解析任务在后台线程完成，确保 UI 线程始终响应用户操作，避免“假死”现象。
+
+### 3. 构建层 (Build Layer) - Vite
+- **技术选型**: 使用 **Vite** 进行构建与打包。
+- **轻量化收益**: 基于 ES Modules 的模块化加载与 Rollup 的 Tree-shaking 机制，自动剔除未使用的代码，确保最终交付的生产环境包体（Bundle Size）维持在最小水平，加快首屏加载速度。
+
 ## ⚠️ 注意事项
 - 请确保您的浏览器支持 WebGPU (推荐使用 Chrome 113+)。
 - 大型模型的解析时间取决于 CPU 和 WASM 性能，请耐心等待。
