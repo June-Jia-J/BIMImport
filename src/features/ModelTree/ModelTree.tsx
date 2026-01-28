@@ -83,7 +83,7 @@ export const ModelTree = () => {
 
     return (
         <div className="h-full flex flex-col min-h-0 bg-background/95 backdrop-blur-md rounded-2xl overflow-hidden shadow-xl border border-border">
-            <div className="border-b border-border/50 bg-background/50 backdrop-blur-sm" style={{ padding: '0 24px' }}>
+            <div className="border-b border-border/50 bg-background/50 backdrop-blur-sm" style={{ padding: '24px 24px' }}>
                 <div className="flex items-center gap-3">
                     <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
                         <Layers className="h-4 w-4 text-primary" />
