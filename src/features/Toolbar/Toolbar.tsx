@@ -46,7 +46,7 @@ export const Toolbar = () => {
 
     return (
         <div className="bg-background/95 backdrop-blur-md border-b border-border/50">
-            <div className="flex gap-4 items-center max-w-[2000px] mx-auto" style={{ padding: '20px 32px' }}>
+            <div className="flex gap-4 items-center max-w-[2000px] mx-auto" style={{ padding: '0 32px' }}>
                 <input
                     type="file"
                     ref={fileInputRef}
@@ -57,12 +57,12 @@ export const Toolbar = () => {
 
                 {/* Logo/Brand */}
                 <div className="flex items-center gap-2 mr-auto">
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg">
+                    <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg">
                         <Sparkles className="h-4 w-4 text-primary-foreground" />
                     </div>
-                    <span className="font-semibold text-lg bg-gradient-to-r from-foreground to-foreground/60 bg-clip-text text-transparent hidden sm:inline">
+                    <h2 className="font-semibold text-2xl bg-gradient-to-r from-foreground to-foreground/60 bg-clip-text text-transparent">
                         BIM 查看器
-                    </span>
+                    </h2>
                 </div>
 
                 {/* Action Buttons */}
