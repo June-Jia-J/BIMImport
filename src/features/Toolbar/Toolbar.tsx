@@ -1,13 +1,15 @@
 import React, { useRef } from 'react';
 import { Button } from "@/components/ui/button";
-import { FolderOpen, RotateCcw, Sparkles } from "lucide-react";
+import { FolderOpen, RotateCcw, Sparkles, Menu, Info } from "lucide-react";
 import { useModelStore } from '../../core/store/useModelStore';
+import { useLayoutStore } from '../../core/store/useLayoutStore';
 import { LoaderFactory } from '../../core/loaders/LoaderFactory';
 import { toast } from "sonner";
 
 export const Toolbar = () => {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const { addModel, setLoading, reset } = useModelStore();
+    const { toggleModelTree, toggleInspector } = useLayoutStore();
 
     const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -55,12 +57,17 @@ export const Toolbar = () => {
                     className="hidden"
                 />
 
+                {/* Mobile Menu Button */}
+                <Button variant="ghost" size="icon" className="lg:hidden" onClick={toggleModelTree}>
+                    <Menu className="h-5 w-5" />
+                </Button>
+
                 {/* Logo/Brand */}
                 <div className="flex items-center gap-2 mr-auto">
                     <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg">
                         <Sparkles className="h-4 w-4 text-primary-foreground" />
                     </div>
-                    <h2 className="font-semibold text-2xl bg-gradient-to-r from-foreground to-foreground/60 bg-clip-text text-transparent">
+                    <h2 className="font-semibold text-2xl bg-gradient-to-r from-foreground to-foreground/60 bg-clip-text text-transparent hidden sm:block">
                         BIM 查看器
                     </h2>
                 </div>
@@ -77,10 +84,10 @@ export const Toolbar = () => {
                         }}
                     >
                         <FolderOpen className="h-4 w-4" />
-                        <span className="font-medium">加载模型</span>
+                        <span className="font-medium hidden sm:inline">加载模型</span>
                     </Button>
 
-                    <div className="w-px h-8 bg-border/50" />
+                    <div className="w-px h-8 bg-border/50 hidden sm:block" />
 
                     <Button
                         variant="secondary"
@@ -89,7 +96,12 @@ export const Toolbar = () => {
                         className="shadow-lg hover:shadow-xl transition-all duration-300 gap-2 px-6"
                     >
                         <RotateCcw className="h-4 w-4" />
-                        <span className="font-medium">重置场景</span>
+                        <span className="font-medium hidden sm:inline">重置场景</span>
+                    </Button>
+
+                    {/* Mobile Info Button */}
+                    <Button variant="ghost" size="icon" className="lg:hidden" onClick={toggleInspector}>
+                        <Info className="h-5 w-5" />
                     </Button>
                 </div>
             </div>
