@@ -24,10 +24,14 @@ export const Viewer3D = () => {
         const sceneManager = new SceneManager();
         sceneManagerRef.current = sceneManager;
 
+        // Get initial dimensions
+        const width = containerRef.current.clientWidth;
+        const height = containerRef.current.clientHeight;
+
         // Initialize Camera
         const camera = new THREE.PerspectiveCamera(
             75,
-            window.innerWidth / window.innerHeight,
+            width / height, // Use container aspect ratio
             0.1,
             10000 // Increased far plane for large models
         );
@@ -38,6 +42,9 @@ export const Viewer3D = () => {
         const controls = new CameraControls(camera, canvasRef.current);
         controlsRef.current = controls;
 
+        // Sets initial size to match container
+        context.renderer.setSize(width, height);
+
         // Animation Loop
         const animate = () => {
             controls.update();
@@ -47,22 +54,26 @@ export const Viewer3D = () => {
         // Use setAnimationLoop for WebXR/WebGPU compatibility
         context.renderer.setAnimationLoop(animate);
 
-        // Handle Resize
-        const handleResize = () => {
-            if (!containerRef.current || !camera) return;
-            const width = containerRef.current.clientWidth;
-            const height = containerRef.current.clientHeight;
+        // Handle Resize with ResizeObserver for responsive layout changes
+        const resizeObserver = new ResizeObserver((entries) => {
+            for (const entry of entries) {
+                if (!containerRef.current || !camera) return;
+                const { width, height } = entry.contentRect;
 
-            camera.aspect = width / height;
-            camera.updateProjectionMatrix();
-            context.renderer.setSize(width, height);
-        }
-        window.addEventListener('resize', handleResize);
+                // Avoid 0 size which might happen during transitions or unmount
+                if (width === 0 || height === 0) return;
 
+                camera.aspect = width / height;
+                camera.updateProjectionMatrix();
+                context.renderer.setSize(width, height);
+            }
+        });
+
+        resizeObserver.observe(containerRef.current);
 
         // Cleanup
         return () => {
-            window.removeEventListener('resize', handleResize);
+            resizeObserver.disconnect();
             context.renderer.setAnimationLoop(null);
             // Optional: Dispose resources
         };

@@ -64,7 +64,7 @@ export const MainLayout = () => {
                         <div className="absolute top-4 left-4 lg:top-8 lg:left-8 z-10 pointer-events-none hidden sm:block">
                             <div className="bg-background/80 backdrop-blur-md rounded-xl px-4 py-2 lg:px-8 lg:py-4 shadow-lg border border-border/50">
                                 <h1 className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/60 text-lg lg:text-2xl font-bold tracking-tight">
-                                    BIM WebGPU 查看器 v2.0
+                                    BIM WebGPU 查看器 v1.0
                                 </h1>
                             </div>
                         </div>
