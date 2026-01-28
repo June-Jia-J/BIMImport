@@ -62,8 +62,8 @@ export const InspectorPanel = () => {
                 </div>
             </div>
 
-            <ScrollArea className="flex-1 w-full h-full">
-                <div className="space-y-8 pb-8 p-4">
+            <ScrollArea className="flex-1 w-full h-full [&>[data-radix-scroll-area-viewport]>div]:!block">
+                <div className="space-y-8" style={{ padding: '24px', paddingBottom: '32px' }}>
                     {/* General Info */}
                     <div className="space-y-3">
                         <div className="flex items-center gap-2 mb-4">
@@ -94,7 +94,7 @@ export const InspectorPanel = () => {
 
                             <div className="space-y-1.5">
                                 <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">UUID</span>
-                                <div className="font-mono text-xs bg-muted/50 px-2.5 py-1.5 rounded-md text-foreground break-all select-all hover:bg-muted transition-colors cursor-text group relative">
+                                <div className="font-mono text-xs bg-muted/50 p-3 rounded-md text-foreground break-all select-all hover:bg-muted transition-colors cursor-text group relative">
                                     {selectedObject.uuid}
                                 </div>
                             </div>
