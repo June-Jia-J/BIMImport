@@ -83,13 +83,13 @@ export const Toolbar = () => {
                     <div className="w-px h-8 bg-border/50" />
 
                     <Button
-                        variant="ghost"
+                        variant="secondary"
                         size="default"
                         onClick={reset}
-                        className="gap-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all duration-300 px-4"
+                        className="shadow-lg hover:shadow-xl transition-all duration-300 gap-2 px-6"
                     >
                         <RotateCcw className="h-4 w-4" />
-                        <span className="font-medium hidden sm:inline">重置场景</span>
+                        <span className="font-medium">重置场景</span>
                     </Button>
                 </div>
             </div>
