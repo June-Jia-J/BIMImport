@@ -77,7 +77,7 @@ export const InspectorPanel = () => {
                             <div className="flex justify-between items-start gap-4">
                                 <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">名称</span>
                                 <span className="text-sm font-medium text-foreground text-right flex-1 truncate">
-                                    {selectedObject.name || '未命名'}
+                                    {selectedObject.name || `对象 ${selectedObject.id}`}
                                 </span>
                             </div>
 
