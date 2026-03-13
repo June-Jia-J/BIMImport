@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { Button } from "@/components/ui/button";
-import { FolderOpen, RotateCcw, Sparkles, Menu, Info } from "lucide-react";
+import { FolderOpen, RotateCcw, Sparkles, Menu, Info, Eye } from "lucide-react";
 import { useModelStore } from '../../core/store/useModelStore';
 import { useLayoutStore } from '../../core/store/useLayoutStore';
 import { LoaderFactory } from '../../core/loaders/LoaderFactory';
@@ -9,7 +9,8 @@ import { toast } from "sonner";
 export const Toolbar = () => {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const { addModel, setLoading, reset } = useModelStore();
-    const { toggleModelTree, toggleInspector } = useLayoutStore();
+    const { toggleModelTree, rightPanel, openInspector, toggleViewpoint } = useLayoutStore();
+    const isViewpointActive = rightPanel === 'viewpoint';
 
     const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -99,8 +100,30 @@ export const Toolbar = () => {
                         <span className="font-medium hidden sm:inline">重置场景</span>
                     </Button>
 
-                    {/* Mobile Info Button */}
-                    <Button variant="ghost" size="icon" className="lg:hidden" onClick={toggleInspector}>
+                    <div className="w-px h-8 bg-border/50 hidden sm:block" />
+
+                    {/* Viewpoint Button - Desktop */}
+                    <Button
+                        variant={isViewpointActive ? "default" : "outline"}
+                        size="default"
+                        onClick={toggleViewpoint}
+                        className="shadow-lg hover:shadow-xl transition-all duration-300 gap-2 px-6 hidden lg:inline-flex"
+                    >
+                        <Eye className="h-4 w-4" />
+                        <span className="font-medium">视点</span>
+                    </Button>
+
+                    {/* Mobile Buttons */}
+                    <Button
+                        variant={isViewpointActive ? "default" : "ghost"}
+                        size="icon"
+                        className="lg:hidden"
+                        onClick={toggleViewpoint}
+                    >
+                        <Eye className="h-5 w-5" />
+                    </Button>
+
+                    <Button variant="ghost" size="icon" className="lg:hidden" onClick={openInspector}>
                         <Info className="h-5 w-5" />
                     </Button>
                 </div>

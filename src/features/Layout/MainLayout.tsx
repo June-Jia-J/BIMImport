@@ -1,15 +1,20 @@
-import { Viewer3D } from '../Viewer/Viewer3D';
+import { useRef } from 'react';
+import { Viewer3D, type Viewer3DRef } from '../Viewer/Viewer3D';
 import { ModelTree } from '../ModelTree/ModelTree';
 import { Toolbar } from '../Toolbar/Toolbar';
 import { InspectorPanel } from './InspectorPanel';
+import { ViewpointPanel } from '../Viewpoint/ViewpointPanel';
 import { WebGPUCheck } from '../../components/WebGPUError';
 import { useModelStore } from '../../core/store/useModelStore';
 import { useLayoutStore } from '../../core/store/useLayoutStore';
-import { cn } from '@/lib/utils'; // Assuming you have a utility for merging classes
+import { cn } from '@/lib/utils';
 
 export const MainLayout = () => {
+    const viewerRef = useRef<Viewer3DRef>(null);
     const { isLoading } = useModelStore();
-    const { isModelTreeOpen, isInspectorOpen, closeAll } = useLayoutStore();
+    const { isModelTreeOpen, rightPanel, closeAll } = useLayoutStore();
+
+    const isRightPanelOpen = rightPanel !== null;
 
     return (
         <WebGPUCheck>
@@ -21,7 +26,7 @@ export const MainLayout = () => {
 
                 <div className="flex-1 flex overflow-hidden relative lg:gap-6 lg:p-6">
                     {/* Mobile Backdrop */}
-                    {(isModelTreeOpen || isInspectorOpen) && (
+                    {(isModelTreeOpen || isRightPanelOpen) && (
                         <div
                             className="absolute inset-0 bg-black/50 z-40 lg:hidden backdrop-blur-sm transition-opacity"
                             onClick={closeAll}
@@ -43,7 +48,7 @@ export const MainLayout = () => {
 
                     {/* Center - 3D Viewer */}
                     <div className="flex-1 relative w-full h-full lg:rounded-2xl overflow-hidden shadow-2xl border-t border-b lg:border border-border/50 bg-background">
-                        <Viewer3D />
+                        <Viewer3D ref={viewerRef} />
 
                         {/* Loading Overlay */}
                         {isLoading && (
@@ -70,16 +75,23 @@ export const MainLayout = () => {
                         </div>
                     </div>
 
-                    {/* Right Sidebar - Inspector */}
+                    {/* Right Sidebar - Shared between Inspector and Viewpoint */}
                     <div className={cn(
                         "fixed inset-y-0 z-50 w-[85%] sm:w-[320px] bg-background/95 backdrop-blur-xl shadow-2xl transition-all duration-300 ease-in-out border-l border-border/50",
                         // Mobile Positioning Logic: Use Right property
-                        isInspectorOpen ? "right-0" : "-right-full",
+                        isRightPanelOpen ? "right-0" : "-right-full",
                         // Desktop Overrides: Static positioning resets fixed/left/right behavior
                         "lg:static lg:w-[320px] lg:bg-transparent lg:shadow-none lg:border-none lg:flex-none lg:flex lg:flex-col lg:h-full lg:min-h-0 lg:z-10"
                     )}>
                         <div className="h-full pt-20 lg:pt-0 p-4 lg:p-0">
-                            <InspectorPanel />
+                            {rightPanel === 'viewpoint' ? (
+                                <ViewpointPanel
+                                    camera={viewerRef.current?.camera || null}
+                                    controls={viewerRef.current?.controls || null}
+                                />
+                            ) : (
+                                <InspectorPanel />
+                            )}
                         </div>
                     </div>
                 </div>

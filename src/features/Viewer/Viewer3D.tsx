@@ -1,16 +1,30 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import * as THREE from 'three';
 import { WebGPUContext } from '../../core/engine/WebGPUContext';
 import { SceneManager } from '../../core/engine/SceneManager';
 import { CameraControls } from '../../core/engine/CameraControls';
 import { useModelStore } from '../../core/store/useModelStore';
 
-export const Viewer3D = () => {
+export interface Viewer3DRef {
+    camera: THREE.PerspectiveCamera | null;
+    controls: { target: THREE.Vector3 } | null;
+}
+
+export const Viewer3D = forwardRef<Viewer3DRef>((_, ref) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const sceneManagerRef = useRef<SceneManager | null>(null);
     const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
     const controlsRef = useRef<CameraControls | null>(null);
+
+    useImperativeHandle(ref, () => ({
+        get camera() {
+            return cameraRef.current;
+        },
+        get controls() {
+            return controlsRef.current?.controls || null;
+        },
+    }));
 
     const models = useModelStore((state) => state.models);
 
@@ -140,4 +154,6 @@ export const Viewer3D = () => {
             <canvas ref={canvasRef} className="block w-full h-full outline-none" />
         </div>
     );
-};
+});
+
+Viewer3D.displayName = 'Viewer3D';

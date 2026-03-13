@@ -1,23 +1,35 @@
 import { create } from 'zustand';
 
+type RightPanelType = 'inspector' | 'viewpoint' | null;
+
 interface LayoutState {
     isModelTreeOpen: boolean;
-    isInspectorOpen: boolean;
+    rightPanel: RightPanelType;
     toggleModelTree: () => void;
-    toggleInspector: () => void;
+    openInspector: () => void;
+    openViewpoint: () => void;
+    toggleViewpoint: () => void;
+    closeRightPanel: () => void;
     closeAll: () => void;
 }
 
 export const useLayoutStore = create<LayoutState>((set) => ({
     isModelTreeOpen: false,
-    isInspectorOpen: false,
-    toggleModelTree: () => set((state) => ({ 
+    rightPanel: null,
+    toggleModelTree: () => set((state) => ({
         isModelTreeOpen: !state.isModelTreeOpen,
-        isInspectorOpen: false // Close other panel
     })),
-    toggleInspector: () => set((state) => ({ 
-        isInspectorOpen: !state.isInspectorOpen,
-        isModelTreeOpen: false // Close other panel
+    openInspector: () => set({
+        rightPanel: 'inspector',
+    }),
+    openViewpoint: () => set({
+        rightPanel: 'viewpoint',
+    }),
+    toggleViewpoint: () => set((state) => ({
+        rightPanel: state.rightPanel === 'viewpoint' ? null : 'viewpoint',
     })),
-    closeAll: () => set({ isModelTreeOpen: false, isInspectorOpen: false }),
+    closeRightPanel: () => set({
+        rightPanel: null,
+    }),
+    closeAll: () => set({ isModelTreeOpen: false, rightPanel: null }),
 }));
