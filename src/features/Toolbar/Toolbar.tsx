@@ -1,15 +1,16 @@
 import React, { useRef } from 'react';
 import { Button } from "@/components/ui/button";
-import { FolderOpen, RotateCcw, Sparkles, Menu, Info } from "lucide-react";
+import { FolderOpen, RotateCcw, Sparkles, Menu, Info, Camera } from "lucide-react";
 import { useModelStore } from '../../core/store/useModelStore';
 import { useLayoutStore } from '../../core/store/useLayoutStore';
 import { LoaderFactory } from '../../core/loaders/LoaderFactory';
 import { toast } from "sonner";
+import { cn } from '@/lib/utils';
 
 export const Toolbar = () => {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const { addModel, setLoading, reset } = useModelStore();
-    const { toggleModelTree, toggleInspector } = useLayoutStore();
+    const { toggleModelTree, toggleInspector, toggleViewpoint, rightPanelMode, isModelTreeOpen } = useLayoutStore();
 
     const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -57,12 +58,15 @@ export const Toolbar = () => {
                     className="hidden"
                 />
 
-                {/* Mobile Menu Button */}
-                <Button variant="ghost" size="icon" className="lg:hidden" onClick={toggleModelTree}>
+                <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className={cn("lg:hidden", isModelTreeOpen && "bg-primary/20")}
+                    onClick={toggleModelTree}
+                >
                     <Menu className="h-5 w-5" />
                 </Button>
 
-                {/* Logo/Brand */}
                 <div className="flex items-center gap-2 mr-auto">
                     <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg">
                         <Sparkles className="h-4 w-4 text-primary-foreground" />
@@ -72,7 +76,6 @@ export const Toolbar = () => {
                     </h2>
                 </div>
 
-                {/* Action Buttons */}
                 <div className="flex gap-2">
                     <Button
                         variant="default"
@@ -99,8 +102,25 @@ export const Toolbar = () => {
                         <span className="font-medium hidden sm:inline">重置场景</span>
                     </Button>
 
-                    {/* Mobile Info Button */}
-                    <Button variant="ghost" size="icon" className="lg:hidden" onClick={toggleInspector}>
+                    <Button
+                        variant={rightPanelMode === 'viewpoint' ? 'default' : 'secondary'}
+                        size="default"
+                        onClick={toggleViewpoint}
+                        className={cn(
+                            "shadow-lg hover:shadow-xl transition-all duration-300 gap-2 px-6",
+                            rightPanelMode === 'viewpoint' && "text-primary-foreground"
+                        )}
+                    >
+                        <Camera className="h-4 w-4" />
+                        <span className="font-medium hidden sm:inline">视点</span>
+                    </Button>
+
+                    <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className={cn("lg:hidden", rightPanelMode === 'inspector' && "bg-primary/20")}
+                        onClick={toggleInspector}
+                    >
                         <Info className="h-5 w-5" />
                     </Button>
                 </div>
