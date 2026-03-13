@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { WebGPUContext } from '../../core/engine/WebGPUContext';
 import { SceneManager } from '../../core/engine/SceneManager';
 import { CameraControls } from '../../core/engine/CameraControls';
+import { CameraManager } from '../../core/engine/CameraManager';
 import { useModelStore } from '../../core/store/useModelStore';
 
 export const Viewer3D = () => {
@@ -41,6 +42,7 @@ export const Viewer3D = () => {
         // Initialize Controls
         const controls = new CameraControls(camera, canvasRef.current);
         controlsRef.current = controls;
+        CameraManager.getInstance().setControls(controls);
 
         // Sets initial size to match container
         context.renderer.setSize(width, height);

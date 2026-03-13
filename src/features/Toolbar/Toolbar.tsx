@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { Button } from "@/components/ui/button";
-import { FolderOpen, RotateCcw, Sparkles, Menu, Info } from "lucide-react";
+import { FolderOpen, RotateCcw, Sparkles, Menu, Info, Camera } from "lucide-react";
 import { useModelStore } from '../../core/store/useModelStore';
 import { useLayoutStore } from '../../core/store/useLayoutStore';
 import { LoaderFactory } from '../../core/loaders/LoaderFactory';
@@ -9,7 +9,7 @@ import { toast } from "sonner";
 export const Toolbar = () => {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const { addModel, setLoading, reset } = useModelStore();
-    const { toggleModelTree, toggleInspector } = useLayoutStore();
+    const { toggleModelTree, toggleInspector, toggleViewpoint } = useLayoutStore();
 
     const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -97,6 +97,18 @@ export const Toolbar = () => {
                     >
                         <RotateCcw className="h-4 w-4" />
                         <span className="font-medium hidden sm:inline">重置场景</span>
+                    </Button>
+
+                    <div className="w-px h-8 bg-border/50 hidden sm:block" />
+
+                    <Button
+                        variant="secondary"
+                        size="default"
+                        onClick={toggleViewpoint}
+                        className="shadow-lg hover:shadow-xl transition-all duration-300 gap-2 px-6"
+                    >
+                        <Camera className="h-4 w-4" />
+                        <span className="font-medium hidden sm:inline">视点</span>
                     </Button>
 
                     {/* Mobile Info Button */}
