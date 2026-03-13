@@ -5,7 +5,12 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Settings, Info, Move, RotateCw, Maximize2, Database } from 'lucide-react';
 
-export const InspectorPanel = () => {
+interface InspectorPanelProps {
+    camera?: THREE.PerspectiveCamera | null;
+    controls?: { target: THREE.Vector3 } | null;
+}
+
+export const InspectorPanel = ({}: InspectorPanelProps) => {
     const { selectedId, models } = useModelStore();
 
     // Helper to find object by ID in the model tree
@@ -26,8 +31,8 @@ export const InspectorPanel = () => {
 
     if (!selectedObject) {
         return (
-            <div className="h-full flex flex-col">
-                <div className="px-10 py-6 border-b border-border/50" style={{ padding: '24px 24px' }}>
+            <div className="h-full flex flex-col min-h-0 bg-background/95 backdrop-blur-md rounded-2xl overflow-hidden shadow-xl border border-border">
+                <div className="border-b border-border/50 bg-background/50 backdrop-blur-sm" style={{ padding: '24px 24px' }}>
                     <div className="flex items-center gap-3">
                         <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
                             <Settings className="h-4 w-4 text-primary" />
