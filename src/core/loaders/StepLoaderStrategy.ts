@@ -34,7 +34,15 @@ export class StepLoaderStrategy implements IBimLoader {
 
         const group = new THREE.Group();
 
-        for (const mesh of result.meshes) {
+        // 使用基于mesh索引的固定颜色方案，确保同一模型每次导入颜色一致
+        const colors = [
+            0x3498db, 0xe74c3c, 0x2ecc71, 0xf39c12, 0x9b59b6,
+            0x1abc9c, 0xe67e22, 0x34495e, 0x95a5a6, 0xd35400,
+            0x16a085, 0x8e44ad, 0x27ae60, 0xc0392b, 0x2980b9
+        ];
+
+        for (let i = 0; i < result.meshes.length; i++) {
+            const mesh = result.meshes[i];
             const geometry = new THREE.BufferGeometry();
 
             // Setup attributes
@@ -48,8 +56,9 @@ export class StepLoaderStrategy implements IBimLoader {
                 geometry.setIndex(new THREE.Uint16BufferAttribute(mesh.index.array, 1));
             }
 
+            const colorIndex = i % colors.length;
             const material = new THREE.MeshStandardMaterial({
-                color: new THREE.Color(Math.random() * 0xffffff).getHex(),
+                color: colors[colorIndex],
                 side: THREE.DoubleSide,
                 metalness: 0.1,
                 roughness: 0.8
