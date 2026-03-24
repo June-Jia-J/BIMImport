@@ -11,8 +11,14 @@ export const Viewer3D = () => {
     const sceneManagerRef = useRef<SceneManager | null>(null);
     const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
     const controlsRef = useRef<CameraControls | null>(null);
+    const raycasterRef = useRef<THREE.Raycaster | null>(null);
+    const mouseRef = useRef<THREE.Vector2 | null>(null);
+    const selectedObjectRef = useRef<THREE.Object3D | null>(null);
+    const originalMaterialsRef = useRef<Map<THREE.Mesh, THREE.Material | THREE.Material[]>>(new Map());
 
     const models = useModelStore((state) => state.models);
+    const selectedId = useModelStore((state) => state.selectedId);
+    const selectObject = useModelStore((state) => state.selectObject);
 
     useEffect(() => {
         if (!canvasRef.current || !containerRef.current) return;
@@ -41,6 +47,14 @@ export const Viewer3D = () => {
         // Initialize Controls
         const controls = new CameraControls(camera, canvasRef.current);
         controlsRef.current = controls;
+
+        // Initialize Raycaster
+        const raycaster = new THREE.Raycaster();
+        raycasterRef.current = raycaster;
+
+        // Initialize Mouse
+        const mouse = new THREE.Vector2();
+        mouseRef.current = mouse;
 
         // Sets initial size to match container
         context.renderer.setSize(width, height);
@@ -71,13 +85,56 @@ export const Viewer3D = () => {
 
         resizeObserver.observe(containerRef.current);
 
+        // Click handler for object selection
+        const handleClick = (event: MouseEvent) => {
+            if (!canvasRef.current || !cameraRef.current || !sceneManagerRef.current || !raycasterRef.current || !mouseRef.current) return;
+
+            const rect = canvasRef.current.getBoundingClientRect();
+            mouseRef.current.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+            mouseRef.current.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+            raycasterRef.current.setFromCamera(mouseRef.current, cameraRef.current);
+
+            // Get all mesh objects from models
+            const meshes: THREE.Mesh[] = [];
+            models.forEach(model => {
+                model.traverse((child) => {
+                    if (child instanceof THREE.Mesh) {
+                        meshes.push(child);
+                    }
+                });
+            });
+
+            const intersects = raycasterRef.current.intersectObjects(meshes, false);
+
+            if (intersects.length > 0) {
+                const clickedObject = intersects[0].object;
+                // Find the root model group or use the clicked mesh itself
+                let targetObject: THREE.Object3D = clickedObject;
+                // Traverse up to find if the clicked object belongs to a model group
+                let parent = clickedObject.parent;
+                while (parent) {
+                    if (models.includes(parent as THREE.Group)) {
+                        targetObject = clickedObject; // Select the mesh, not the group
+                        break;
+                    }
+                    parent = parent.parent;
+                }
+                selectObject(targetObject.uuid);
+            } else {
+                selectObject(null);
+            }
+        };
+
+        canvasRef.current.addEventListener('click', handleClick);
+
         // Cleanup
         return () => {
             resizeObserver.disconnect();
             context.renderer.setAnimationLoop(null);
-            // Optional: Dispose resources
+            canvasRef.current?.removeEventListener('click', handleClick);
         };
-    }, []);
+    }, [models, selectObject]);
 
     // Sync models with scene
     useEffect(() => {
@@ -134,6 +191,54 @@ export const Viewer3D = () => {
         }
 
     }, [models]);
+
+    // Handle selection highlight
+    useEffect(() => {
+        if (!sceneManagerRef.current) return;
+
+        // Helper to find object by UUID
+        const findObject = (objects: THREE.Object3D[], id: string): THREE.Object3D | null => {
+            for (const obj of objects) {
+                if (obj.uuid === id) return obj;
+                if (obj.children.length > 0) {
+                    const found = findObject(obj.children, id);
+                    if (found) return found;
+                }
+            }
+            return null;
+        };
+
+        // Restore original materials for previously selected object
+        originalMaterialsRef.current.forEach((material, mesh) => {
+            mesh.material = material;
+        });
+        originalMaterialsRef.current.clear();
+
+        // Apply highlight to newly selected object
+        if (selectedId) {
+            const selectedObject = findObject(models, selectedId);
+            if (selectedObject) {
+                selectedObject.traverse((child) => {
+                    if (child instanceof THREE.Mesh) {
+                        // Store original material
+                        originalMaterialsRef.current.set(child, child.material);
+                        // Create highlight material
+                        const highlightMaterial = new THREE.MeshStandardMaterial({
+                            color: 0x00aaff,
+                            emissive: 0x0066aa,
+                            emissiveIntensity: 0.3,
+                            side: THREE.DoubleSide,
+                            metalness: 0.1,
+                            roughness: 0.5
+                        });
+                        child.material = highlightMaterial;
+                    }
+                });
+            }
+        }
+
+        selectedObjectRef.current = selectedId ? findObject(models, selectedId) : null;
+    }, [selectedId, models]);
 
     return (
         <div ref={containerRef} className="w-full h-screen overflow-hidden bg-black">

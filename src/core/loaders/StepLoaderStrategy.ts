@@ -49,7 +49,7 @@ export class StepLoaderStrategy implements IBimLoader {
             }
 
             const material = new THREE.MeshStandardMaterial({
-                color: new THREE.Color(Math.random() * 0xffffff).getHex(),
+                color: 0x888888,
                 side: THREE.DoubleSide,
                 metalness: 0.1,
                 roughness: 0.8
