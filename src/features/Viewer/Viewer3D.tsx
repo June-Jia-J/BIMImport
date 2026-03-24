@@ -1,9 +1,20 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import * as THREE from 'three';
 import { WebGPUContext } from '../../core/engine/WebGPUContext';
 import { SceneManager } from '../../core/engine/SceneManager';
 import { CameraControls } from '../../core/engine/CameraControls';
 import { useModelStore } from '../../core/store/useModelStore';
+
+// 辅助函数：根据ID查找对象
+const findObjectById = (models: THREE.Group[], id: string | null): THREE.Object3D | null => {
+    if (!id) return null;
+    for (const model of models) {
+        if (model.uuid === id) return model;
+        const found = model.getObjectByProperty('uuid', id);
+        if (found) return found;
+    }
+    return null;
+};
 
 export const Viewer3D = () => {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -11,8 +22,13 @@ export const Viewer3D = () => {
     const sceneManagerRef = useRef<SceneManager | null>(null);
     const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
     const controlsRef = useRef<CameraControls | null>(null);
+    const raycasterRef = useRef<THREE.Raycaster>(new THREE.Raycaster());
+    const mouseRef = useRef<THREE.Vector2>(new THREE.Vector2());
+    const selectionBoxRef = useRef<THREE.BoxHelper | null>(null);
 
     const models = useModelStore((state) => state.models);
+    const selectedId = useModelStore((state) => state.selectedId);
+    const selectObject = useModelStore((state) => state.selectObject);
 
     useEffect(() => {
         if (!canvasRef.current || !containerRef.current) return;
@@ -42,12 +58,26 @@ export const Viewer3D = () => {
         const controls = new CameraControls(camera, canvasRef.current);
         controlsRef.current = controls;
 
+        // Initialize Selection Box
+        const selectionBox = new THREE.BoxHelper(new THREE.Mesh(), 0x00ff00);
+        selectionBox.visible = false;
+        sceneManager.scene.add(selectionBox);
+        selectionBoxRef.current = selectionBox;
+
         // Sets initial size to match container
         context.renderer.setSize(width, height);
 
         // Animation Loop
         const animate = () => {
             controls.update();
+            // 更新选中框
+            if (selectionBoxRef.current && selectionBoxRef.current.visible) {
+                const selectedObj = findObjectById(models, selectedId);
+                if (selectedObj) {
+                    selectionBoxRef.current.setFromObject(selectedObj);
+                    selectionBoxRef.current.update();
+                }
+            }
             context.render(sceneManager.scene, camera);
         };
 
@@ -71,13 +101,61 @@ export const Viewer3D = () => {
 
         resizeObserver.observe(containerRef.current);
 
+        // 鼠标点击事件处理
+        const handleClick = (event: MouseEvent) => {
+            if (!canvasRef.current || !cameraRef.current || !sceneManagerRef.current) return;
+
+            const rect = canvasRef.current.getBoundingClientRect();
+            mouseRef.current.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+            mouseRef.current.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+            raycasterRef.current.setFromCamera(mouseRef.current, cameraRef.current);
+
+            // 获取所有可选择的对象（模型的所有子对象）
+            const selectableObjects: THREE.Object3D[] = [];
+            models.forEach(model => {
+                model.traverse((child) => {
+                    if (child instanceof THREE.Mesh) {
+                        selectableObjects.push(child);
+                    }
+                });
+            });
+
+            const intersects = raycasterRef.current.intersectObjects(selectableObjects, false);
+
+            if (intersects.length > 0) {
+                const selected = intersects[0].object;
+                selectObject(selected.uuid);
+            } else {
+                // 点击空白处取消选择
+                selectObject(null);
+            }
+        };
+
+        canvasRef.current.addEventListener('click', handleClick);
+
         // Cleanup
         return () => {
             resizeObserver.disconnect();
             context.renderer.setAnimationLoop(null);
+            canvasRef.current?.removeEventListener('click', handleClick);
             // Optional: Dispose resources
         };
-    }, []);
+    }, [models, selectObject]);
+
+    // 监听选中状态变化，更新选中框
+    useEffect(() => {
+        if (!selectionBoxRef.current) return;
+
+        const selectedObj = findObjectById(models, selectedId);
+        if (selectedObj) {
+            selectionBoxRef.current.setFromObject(selectedObj);
+            selectionBoxRef.current.visible = true;
+            selectionBoxRef.current.update();
+        } else {
+            selectionBoxRef.current.visible = false;
+        }
+    }, [selectedId, models]);
 
     // Sync models with scene
     useEffect(() => {
