@@ -3,6 +3,21 @@ import type { IBimLoader } from './IBimLoader';
 // @ts-ignore
 import initOCCT from 'occt-import-js';
 
+// 根据字符串生成固定颜色的哈希函数
+function stringToColor(str: string): number {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+        const char = str.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash; // Convert to 32bit integer
+    }
+    // 使用 HSL 色彩空间生成美观的颜色
+    const hue = Math.abs(hash % 360);
+    const saturation = 60 + Math.abs((hash >> 8) % 30); // 60-90%
+    const lightness = 45 + Math.abs((hash >> 16) % 20); // 45-65%
+    return new THREE.Color(`hsl(${hue}, ${saturation}%, ${lightness}%)`).getHex();
+}
+
 export class StepLoaderStrategy implements IBimLoader {
     constructor() {
         // OCCT initialization usually handles itself or via a global promise
@@ -34,7 +49,8 @@ export class StepLoaderStrategy implements IBimLoader {
 
         const group = new THREE.Group();
 
-        for (const mesh of result.meshes) {
+        for (let i = 0; i < result.meshes.length; i++) {
+            const mesh = result.meshes[i];
             const geometry = new THREE.BufferGeometry();
 
             // Setup attributes
@@ -48,14 +64,19 @@ export class StepLoaderStrategy implements IBimLoader {
                 geometry.setIndex(new THREE.Uint16BufferAttribute(mesh.index.array, 1));
             }
 
+            // 根据mesh名称生成固定颜色，确保相同模型每次导入颜色一致
+            // 优先使用mesh名称，如果没有则使用索引生成唯一标识
+            const meshName = mesh.name || `mesh_${i}`;
+            const colorHex = stringToColor(meshName);
             const material = new THREE.MeshStandardMaterial({
-                color: new THREE.Color(Math.random() * 0xffffff).getHex(),
+                color: colorHex,
                 side: THREE.DoubleSide,
                 metalness: 0.1,
                 roughness: 0.8
             });
 
             const m = new THREE.Mesh(geometry, material);
+            m.name = meshName;
             group.add(m);
         }
 
