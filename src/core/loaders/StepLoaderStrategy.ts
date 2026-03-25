@@ -3,6 +3,13 @@ import type { IBimLoader } from './IBimLoader';
 // @ts-ignore
 import initOCCT from 'occt-import-js';
 
+const COLOR_PALETTE = [
+    0x4a90d9, 0x50c878, 0xf4a460, 0xdda0dd, 0x87ceeb,
+    0xf0e68c, 0xe6e6fa, 0xffa07a, 0x98fb98, 0xadd8e6,
+    0xffb6c1, 0x90ee90, 0xffd700, 0x40e0d0, 0xee82ee,
+    0xf5deb3, 0xdeb887, 0xbc8f8f, 0xa9a9a9, 0xb0c4de
+];
+
 export class StepLoaderStrategy implements IBimLoader {
     constructor() {
         // OCCT initialization usually handles itself or via a global promise
@@ -34,7 +41,7 @@ export class StepLoaderStrategy implements IBimLoader {
 
         const group = new THREE.Group();
 
-        for (const mesh of result.meshes) {
+        result.meshes.forEach((mesh, index) => {
             const geometry = new THREE.BufferGeometry();
 
             // Setup attributes
@@ -48,8 +55,9 @@ export class StepLoaderStrategy implements IBimLoader {
                 geometry.setIndex(new THREE.Uint16BufferAttribute(mesh.index.array, 1));
             }
 
+            const color = COLOR_PALETTE[index % COLOR_PALETTE.length];
             const material = new THREE.MeshStandardMaterial({
-                color: new THREE.Color(Math.random() * 0xffffff).getHex(),
+                color: color,
                 side: THREE.DoubleSide,
                 metalness: 0.1,
                 roughness: 0.8
@@ -57,7 +65,7 @@ export class StepLoaderStrategy implements IBimLoader {
 
             const m = new THREE.Mesh(geometry, material);
             group.add(m);
-        }
+        });
 
         if (group.children.length === 0) {
             console.warn("StepLoaderStrategy: Group is empty after processing meshes!");
